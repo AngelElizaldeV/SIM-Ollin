@@ -1,7 +1,0 @@
-
-{
-    "python.analysis.autoImportCompletions": true,
-    "python.analysis.extraPaths": [
-        "./.venv/Lib/site-packages"
-    ]
-}
