@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Dorna_URDF2">
+  <link
+    name="Base">
+    <inertial>
+      <origin
+        xyz="0.00171799594299715 3.24719083653058E-05 0.0454026855130489"
+        rpy="0 0 0" />
+      <mass
+        value="0.142487012559893" />
+      <inertia
+        ixx="0.00027838863195399"
+        ixy="1.2540633863245E-07"
+        ixz="9.64546650700698E-06"
+        iyy="0.000272080825764112"
+        iyz="1.82309338875035E-07"
+        izz="0.000136636035668991" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/Base.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.627450980392157 0.627450980392157 0.627450980392157 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/Base.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="J0">
+    <inertial>
+      <origin
+        xyz="0.0019699415967287 -3.66373598126302E-15 0.122862275694399"
+        rpy="0 0 0" />
+      <mass
+        value="0.265219935481748" />
+      <inertia
+        ixx="0.00122935540002985"
+        ixy="-2.59367998968208E-18"
+        ixz="-0.000407686810698034"
+        iyy="0.00161738031064059"
+        iyz="-2.55650801593763E-18"
+        izz="0.00142773672794897" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/J0.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.627450980392157 0.627450980392157 0.627450980392157 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/J0.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J0"
+    type="continuous">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="Base" />
+    <child
+      link="J0" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="J1">
+    <inertial>
+      <origin
+        xyz="0.0931404070634041 -1.77635683940025E-15 9.76996261670138E-15"
+        rpy="0 0 0" />
+      <mass
+        value="0.119188431579766" />
+      <inertia
+        ixx="0.000306938193650735"
+        ixy="-2.685387141207E-18"
+        ixz="2.57903773183001E-18"
+        iyy="0.00109779729621223"
+        iyz="-2.0989708043535E-18"
+        izz="0.000847368368743496" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/J1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.627450980392157 0.627450980392157 0.627450980392157 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/J1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J1"
+    type="continuous">
+    <origin
+      xyz="0.095476 0 0.20599"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="J0" />
+    <child
+      link="J1" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="J2">
+    <inertial>
+      <origin
+        xyz="-0.0610867096246235 2.22044604925031E-16 1.22124532708767E-15"
+        rpy="0 0 0" />
+      <mass
+        value="0.0842278287822715" />
+      <inertia
+        ixx="0.000159025056472993"
+        ixy="1.63165041531024E-19"
+        ixz="2.57631782930965E-19"
+        iyy="0.000543216800409979"
+        iyz="-3.33059385007049E-19"
+        izz="0.000410910511975228" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/J2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.627450980392157 0.627450980392157 0.627450980392157 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/J2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J2"
+    type="continuous">
+    <origin
+      xyz="0.2032 0 0"
+      rpy="3.1416 0 3.1416" />
+    <parent
+      link="J1" />
+    <child
+      link="J2" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="J3">
+    <inertial>
+      <origin
+        xyz="-0.000500744200377712 -5.99520433297585E-15 3.5527136788005E-15"
+        rpy="0 0 0" />
+      <mass
+        value="0.00651060166343246" />
+      <inertia
+        ixx="2.17554830397041E-06"
+        ixy="1.4141694211265E-19"
+        ixz="-1.19697348758942E-19"
+        iyy="4.04673616883576E-06"
+        iyz="3.21988733662304E-21"
+        izz="2.21911621152792E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/J3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.627450980392157 0.627450980392157 0.627450980392157 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/J3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J3"
+    type="continuous">
+    <origin
+      xyz="-0.1524 0 0"
+      rpy="3.1416 0 3.1416" />
+    <parent
+      link="J2" />
+    <child
+      link="J3" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="J4">
+    <inertial>
+      <origin
+        xyz="1.18793863634892E-14 0.00816824454766807 0.00181827101333232"
+        rpy="0 0 0" />
+      <mass
+        value="0.0158323889728486" />
+      <inertia
+        ixx="3.06380350609756E-06"
+        ixy="5.38921988723959E-22"
+        ixz="-6.54031507463726E-22"
+        iyy="3.69083148341954E-06"
+        iyz="-7.74781562331508E-07"
+        izz="3.91946937751303E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/J4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/J4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J4"
+    type="continuous">
+    <origin
+      xyz="0.043668 0 0"
+      rpy="0 1.5708 0" />
+    <parent
+      link="J3" />
+    <child
+      link="J4" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+  <link
+    name="Pinza1">
+    <inertial>
+      <origin
+        xyz="-0.0395313653956102 0.00305931262991144 0.00999999999999979"
+        rpy="0 0 0" />
+      <mass
+        value="0.0329921480222008" />
+      <inertia
+        ixx="2.16299033950902E-06"
+        ixy="2.89067511340229E-06"
+        ixz="6.96211633636584E-21"
+        iyy="3.00320829753177E-05"
+        iyz="-1.58284496981875E-21"
+        izz="2.99955967800134E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/Pinza1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/Pinza1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Pinza1"
+    type="continuous">
+    <origin
+      xyz="0.0125 -0.005 0.0125"
+      rpy="1.5708 1.3891 3.1416" />
+    <parent
+      link="J4" />
+    <child
+      link="Pinza1" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="Pinza2">
+    <inertial>
+      <origin
+        xyz="0.0394297174417539 0.0041696074482146 -0.00999999999999979"
+        rpy="0 0 0" />
+      <mass
+        value="0.0329921480222008" />
+      <inertia
+        ixx="2.04953926359032E-06"
+        ixy="-2.27625853544929E-06"
+        ixz="-6.73066825925822E-20"
+        iyy="3.01455340512363E-05"
+        iyz="-9.28764812442901E-21"
+        izz="2.99955967800133E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/Pinza2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Dorna_URDF2/meshes/Pinza2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Pinza2"
+    type="continuous">
+    <origin
+      xyz="-0.0125 -0.005 0.0125"
+      rpy="1.5708 -1.5708 0" />
+    <parent
+      link="J4" />
+    <child
+      link="Pinza2" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+</robot>

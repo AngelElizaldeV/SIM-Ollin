@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Feeder">
+  <link
+    name="Feeder">
+    <inertial>
+      <origin
+        xyz="-0.0143248838901013 -0.00189594051485911 1.05456646058733"
+        rpy="0 0 0" />
+      <mass
+        value="0.3882" />
+      <inertia
+        ixx="0.00333967963531685"
+        ixy="-2.48154183765909E-20"
+        ixz="-1.75831877865859E-20"
+        iyy="0.000169344635316847"
+        iyz="4.7052232238389E-20"
+        izz="0.003415945" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Feeder/meshes/Feeder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Feeder/meshes/Feeder.STL" />
+      </geometry>
+    </collision>
+  </link>
+</robot>

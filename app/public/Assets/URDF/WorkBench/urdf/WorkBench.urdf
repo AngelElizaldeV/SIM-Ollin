@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="WorkBench">
+  <link
+    name="Table">
+    <inertial>
+      <origin
+        xyz="0.702500000000001 0.9525 0.511730012571223"
+        rpy="0 0 0" />
+      <mass
+        value="420.059358" />
+      <inertia
+        ixx="139.202493657619"
+        ixy="8.67361737988404E-14"
+        ixz="-2.56182913477088E-15"
+        iyy="76.6161036033189"
+        iyz="9.34377649458167E-15"
+        izz="210.489385649185" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WorkBench/meshes/Table.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WorkBench/meshes/Table.STL" />
+      </geometry>
+    </collision>
+  </link>
+</robot>

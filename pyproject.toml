@@ -1,0 +1,26 @@
+[project]
+name = "sim-ollin"
+version = "0.1.0"
+description = "3D simulator for assembly line optimization"
+authors = [
+    {name = "Angel Daniel Elizalde Vega",email = "a.elizalde@posgrado.cidesi.edu.mx"}
+]
+requires-python = ">=3.11, <3.12"
+dependencies = [
+    "pyqt6 (>=6.10.2,<7.0.0)",
+    "pybullet (>=3.2.7,<4.0.0)",
+    "matplotlib (>=3.10.8,<4.0.0)",
+    "dorna @ file:///C:/Users/g477e/Documents/CIDESI/SIM-Ollin/dorna",
+    "setuptools (<81)",
+    "joblib (>=1.5.3,<2.0.0)",
+    "pandas (==2.2.2)",
+    "numpy (==1.26.4)"
+]
+
+[tool.poetry]
+packages = [{ include = "app" }]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
