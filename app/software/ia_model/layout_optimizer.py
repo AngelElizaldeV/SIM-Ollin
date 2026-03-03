@@ -1,4 +1,5 @@
 # layout_optimizer.py
+
 import math
 import random
 import itertools
@@ -6,60 +7,37 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 import uuid
 import app.public.globals as globals
-import copy
 import os
+from app.software.ia_model.surrogate import SurrogateModel
+from app.software.robot.robot_kinematics import RobotKinematics
 
-# carga segura de artefactos de preprocessing
-import joblib
-import pandas as pd
-import numpy as np
-
-base_path = os.path.dirname(os.path.abspath(__file__))
-
-# intenta cargar scaler y feature_columns (si existen)
-try:
-    scaler = joblib.load(os.path.join(base_path, "scaler_v1.pkl"))
-except Exception as e:
-    print("Warning: no se pudo cargar scaler_v1.pkl:", e)
-    scaler = None
-
-try:
-    feature_columns = joblib.load(os.path.join(base_path, "feature_columns.pkl"))
-except Exception as e:
-    print("Warning: no se pudo cargar feature_columns.pkl:", e)
-    feature_columns = []
-
-# Surrogate (modelo TF) — NO importamos tensorflow aquí para evitar errores de runtime en la UI.
-_SURROGATE = None
-_SURROGATE_LOADED = False
-
-def get_surrogate():
-    global _SURROGATE, _SURROGATE_LOADED
-
-    if _SURROGATE_LOADED:
-        return _SURROGATE
-
-    _SURROGATE_LOADED = True
-
-    try:
-        import os
-        import tensorflow as tf
-
-        base_path = os.path.dirname(os.path.abspath(__file__))
-        model_path = os.path.join(base_path, "surrogate_v1.keras")
-
-        _SURROGATE = tf.keras.models.load_model(model_path)
-        print("Surrogate cargado correctamente desde:", model_path)
-
-    except Exception as e:
-        print("No se pudo cargar surrogate:", e)
-        _SURROGATE = None
-
-    return _SURROGATE
-
+IK_MODEL = RobotKinematics()
 # ===============================
 # Utilidades
 # ===============================
+
+# ===============================
+# Surrogate global (opcional)
+# ===============================
+
+SURROGATE = None
+
+def load_surrogate():
+    global SURROGATE
+    if SURROGATE is None:
+        base_path = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "ia_model"
+        )
+        model_path = os.path.abspath(os.path.join(base_path, "surrogate_model.keras"))
+        scaler_path = os.path.abspath(os.path.join(base_path, "scaler.pkl"))
+
+        if os.path.exists(model_path) and os.path.exists(scaler_path):
+            SURROGATE = SurrogateModel(model_path, scaler_path)
+            print("Surrogate cargado correctamente.")
+        else:
+            print("No se encontró modelo surrogate.")
 
 def dist(p1, p2):
     return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
@@ -102,23 +80,14 @@ def shape_penalty_S(stations, R1, R2, y_split):
 
 
 def shape_penalty_L(stations, params):
-    """
-    Forma L tipo A:
-    - Robot 1: estaciones alineadas verticalmente (x ≈ R1.x)
-    - Robot 2: estaciones alineadas horizontalmente (y ≈ R2.y)
-    """
-
     penalty = 0.0
-
     R1 = params["R1"]
     R2 = params["R2"]
 
-    # Robot 1 → vertical
     for idx in params["robot1_stations"]:
         x, y = stations[idx]
         penalty += (x - R1[0]) ** 2
 
-    # Robot 2 → horizontal
     for idx in params["robot2_stations"]:
         x, y = stations[idx]
         penalty += (y - R2[1]) ** 2
@@ -127,120 +96,182 @@ def shape_penalty_L(stations, params):
 
 
 # ===============================
-# Evaluación
+# Evaluación (ORIGINAL)
 # ===============================
 
 def evaluar_layout(layout_vars, params):
-    """Evaluación original (sin surrogate) — devuelve fitness clásico."""
-    stations = build_full_layout(layout_vars, params)
 
-    R1 = params["R1"]
-    R2 = params["R2"]
-
-    reach = params["reach"]
-    r_min = params["r_min"]
-
-    tiempos = params["tiempos_estacion"]
     baseline = params["baseline_time"]
 
-    d_min = params["d_min"]
-    PENALTY = params["PENALTY"]
+    # 1️⃣ Tiempo dinámico calibrado
+    metrics = compute_layout_metrics(layout_vars, params)
+    total_time = metrics["total_system"]
 
-    total_time = 0.0
+    # 2️⃣ Penalizaciones geométricas (se mantienen)
+    stations = build_full_layout(layout_vars, params)
+
     penalty = 0.0
+    penalty += separation_penalty(
+        stations,
+        params["d_min"],
+        params["PENALTY"]
+    )
 
-    # Penalización separación
-    penalty += separation_penalty(stations, d_min, PENALTY)
-
-    # ROBOT 1
-    prev = params["A"]
+    # Penalizaciones de alcance
     for idx in params["robot1_stations"]:
-        d = dist(R1, stations[idx])
+        d = dist(params["R1"], stations[idx])
+        if d < params["r_min"]:
+            penalty += params["PENALTY"] * (params["r_min"] - d)
+        elif d > params["reach"]:
+            penalty += params["PENALTY"] * (d - params["reach"])
 
-        if d < r_min:
-            penalty += PENALTY * (r_min - d)
-        elif d > reach:
-            penalty += PENALTY * (d - reach)
+    for idx in params["robot2_stations"]:
+        d = dist(params["R2"], stations[idx])
+        if d < params["r_min"]:
+            penalty += params["PENALTY"] * (params["r_min"] - d)
+        elif d > params["reach"]:
+            penalty += params["PENALTY"] * (d - params["reach"])
 
-        total_time += dist(prev, stations[idx])
-        total_time += tiempos[idx]
-        prev = stations[idx]
-
-    # ROBOT 2
-    prev = stations[params["robot2_stations"][0]]
-    for idx in params["robot2_stations"][1:]:
-        d = dist(R2, stations[idx])
-
-        if d < r_min:
-            penalty += PENALTY * (r_min - d)
-        elif d > reach:
-            penalty += PENALTY * (d - reach)
-
-        total_time += dist(prev, stations[idx])
-        total_time += tiempos[idx]
-        prev = stations[idx]
-
-    # SHAPE MODE
+    # Penalización de forma
     if params["shape_mode"] == "S":
-        penalty += params["shape_weight"] * shape_penalty_S(stations, R1, R2, stations[3][1])
+        penalty += params["shape_weight"] * shape_penalty_S(
+            stations, params["R1"], params["R2"], stations[3][1]
+        )
     elif params["shape_mode"] == "U":
-        penalty += params["shape_weight"] * radial_penalty(stations, R1, R2, r_min, reach, stations[3][1])
+        penalty += params["shape_weight"] * radial_penalty(
+            stations,
+            params["R1"],
+            params["R2"],
+            params["r_min"],
+            params["reach"],
+            stations[3][1]
+        )
     elif params["shape_mode"] == "L":
-        penalty += params["shape_weight"] * shape_penalty_L(stations, params)
+        penalty += params["shape_weight"] * shape_penalty_L(
+            stations, params
+        )
 
     fitness = (total_time + penalty) / baseline
+
     return fitness
 
 
+# ===============================
+# Métricas
+# ===============================
+
+# ------------------------------
+# Calibración de tiempo de movimiento
+# ------------------------------
+# Coeficientes obtenidos por regresión sobre tus ejecuciones:
+# elapsed_s = a * distance_mm + b
+# (puedes ajustar estos valores si recalibras con más datos)
+MOTION_COEF_DEFAULT = {
+    "Robot 1": {"a": 0.007181, "b": 1.446751},
+    "Robot 2": {"a": 0.009065, "b": 0.806503}
+}
+
+def _meters_to_mm(d_m):
+    return d_m * 1000.0
+
 def compute_layout_metrics(layout_vars, params):
-    """
-    Calcula las métricas teóricas que ya usabas: move/proc/total por robot,
-    balance, symmetry_index, idle_time_estimated, total_system.
-    """
+
     stations = build_full_layout(layout_vars, params)
-
-    R1 = params["R1"]
-    R2 = params["R2"]
-
     tiempos = params["tiempos_estacion"]
 
+    # Coeficientes calibrados
+    A_XY = 0.012188
+    A_Z  = 0.017244
+    C_OFFSET = 0.299785
+
+    # Alturas
+    FEEDER_Z_MM = 110
+    STATION_Z_MM = 150
+
+    total_move_time = 0.0
+    total_proc = 0.0
+
+    # ========================
     # ROBOT 1
-    prev = params["A"]
-    move_r1 = 0.0
-    proc_r1 = 0.0
+    # ========================
+    prev_global = params["A"]
+    base_x, base_y = params["R1"]
+
     for idx in params["robot1_stations"]:
-        move_r1 += dist(prev, stations[idx])
-        proc_r1 += tiempos[idx]
-        prev = stations[idx]
-    total_r1 = move_r1 + proc_r1
 
+        # convertir a coordenadas locales
+        xg, yg = stations[idx]
+        xr = xg - base_x
+        yr = yg - base_y
+
+        pxr = prev_global[0] - base_x
+        pyr = prev_global[1] - base_y
+
+        dx = xr - pxr
+        dy = yr - pyr
+
+        dist_xy_m = math.sqrt(dx**2 + dy**2)
+        dist_xy_mm = dist_xy_m * 1000.0
+
+        total_move_time += A_XY * dist_xy_mm + C_OFFSET
+
+        # vertical fijo por estación
+        if idx == 0 or idx == 8:
+            total_move_time += A_Z * (2 * FEEDER_Z_MM)
+        else:
+            total_move_time += A_Z * (2 * STATION_Z_MM)
+
+        total_proc += tiempos[idx]
+
+        prev_global = stations[idx]
+
+    # ========================
     # ROBOT 2
-    prev = stations[params["robot2_stations"][0]]
-    move_r2 = 0.0
-    proc_r2 = 0.0
-    for idx in params["robot2_stations"][1:]:
-        move_r2 += dist(prev, stations[idx])
-        proc_r2 += tiempos[idx]
-        prev = stations[idx]
-    total_r2 = move_r2 + proc_r2
+    # ========================
+    base_x, base_y = params["R2"]
+    prev_global = stations[params["robot2_stations"][0]]
 
-    total_system = total_r1 + total_r2
-    balance = abs(total_r1 - total_r2)
-    symmetry_index = balance / total_system if total_system > 0 else 0.0
-    idle_time = balance
+    for idx in params["robot2_stations"][1:]:
+
+        xg, yg = stations[idx]
+        xr = xg - base_x
+        yr = yg - base_y
+
+        pxr = prev_global[0] - base_x
+        pyr = prev_global[1] - base_y
+
+        dx = xr - pxr
+        dy = yr - pyr
+
+        dist_xy_m = math.sqrt(dx**2 + dy**2)
+        dist_xy_mm = dist_xy_m * 1000.0
+
+        total_move_time += A_XY * dist_xy_mm + C_OFFSET
+
+        if idx == 0 or idx == 8:
+            total_move_time += A_Z * (2 * FEEDER_Z_MM)
+        else:
+            total_move_time += A_Z * (2 * STATION_Z_MM)
+
+        total_proc += tiempos[idx]
+
+        prev_global = stations[idx]
+
+    total_system = total_move_time + total_proc
 
     return {
-        "move_r1": move_r1,
-        "proc_r1": proc_r1,
-        "total_r1": total_r1,
-        "move_r2": move_r2,
-        "proc_r2": proc_r2,
-        "total_r2": total_r2,
+        "move_r1": None,
+        "proc_r1": None,
+        "total_r1": None,
+        "move_r2": None,
+        "proc_r2": None,
+        "total_r2": None,
         "total_system": total_system,
-        "balance": balance,
-        "symmetry_index": symmetry_index,
-        "idle_time_estimated": idle_time
+        "balance": 0.0,
+        "symmetry_index": 0.0,
+        "idle_time_estimated": 0.0
     }
+
 
 
 # ===============================
@@ -251,10 +282,7 @@ def random_layout(bounds_R1, bounds_R2, params):
     layout = []
     for i, is_fixed in enumerate(params["fixed_mask"]):
         if not is_fixed:
-            if i in params["robot1_stations"]:
-                bounds = bounds_R1
-            else:
-                bounds = bounds_R2
+            bounds = bounds_R1 if i in params["robot1_stations"] else bounds_R2
             x = random.uniform(bounds["x"][0], bounds["x"][1])
             y = random.uniform(bounds["y"][0], bounds["y"][1])
             layout.extend([x, y])
@@ -273,198 +301,138 @@ def mutate(layout, sigma=0.02):
     layout[i] += random.gauss(0, sigma)
 
 
-# ===============================
-# Surrogate feature builder + evaluator
-# ===============================
-
-def build_feature_vector(layout_vars, params):
-    """
-    Construye el vector (1xN) de features exactamente igual a como lo hiciste para entrenar:
-    - reconstruye estaciones
-    - calcula métricas (compute_layout_metrics)
-    - calcula geometría (avg/max/std/distancias, centroid, var, radial_dispersion, pct_closer)
-    - arma DataFrame, one-hot de shape_mode y completa/ordena según feature_columns
-    - escala con 'scaler' si está disponible
-    Devuelve numpy array con shape (1, n_features) listo para model.predict.
-    """
+def evaluar_layout_joint_based(layout_vars, params):
 
     stations = build_full_layout(layout_vars, params)
 
-    # geometría y distancias
-    if stations:
-        xs = np.array([s[0] for s in stations])
-        ys = np.array([s[1] for s in stations])
-        # distancias a robots
-        R1 = params.get("R1", (0, 0))
-        R2 = params.get("R2", (0, 0))
-        dist_r1 = np.array([math.dist(s, R1) for s in stations])
-        dist_r2 = np.array([math.dist(s, R2) for s in stations])
-        avg_dist_r1 = float(np.mean(dist_r1))
-        avg_dist_r2 = float(np.mean(dist_r2))
-        max_dist_r1 = float(np.max(dist_r1))
-        max_dist_r2 = float(np.max(dist_r2))
-        std_dist_r1 = float(np.std(dist_r1))
-        std_dist_r2 = float(np.std(dist_r2))
-        closer_to_r1 = int(np.sum(dist_r1 < dist_r2))
-        closer_to_r2 = int(np.sum(dist_r2 <= dist_r1))
-        pct_r1 = closer_to_r1 / len(stations)
-        pct_r2 = closer_to_r2 / len(stations)
-        geom_balance = abs(pct_r1 - pct_r2)
-        centroid_x = float(np.mean(xs))
-        centroid_y = float(np.mean(ys))
-        centroid_dist_r1 = float(math.dist((centroid_x, centroid_y), R1))
-        centroid_dist_r2 = float(math.dist((centroid_x, centroid_y), R2))
-        var_x = float(np.var(xs))
-        var_y = float(np.var(ys))
-        radial_dispersion = float(np.mean([math.dist((x, y), (centroid_x, centroid_y)) for x, y in stations]))
-    else:
-        avg_dist_r1 = avg_dist_r2 = max_dist_r1 = max_dist_r2 = 0.0
-        std_dist_r1 = std_dist_r2 = 0.0
-        pct_r1 = pct_r2 = geom_balance = 0.0
-        centroid_x = centroid_y = centroid_dist_r1 = centroid_dist_r2 = 0.0
-        var_x = var_y = radial_dispersion = 0.0
+    baseline = params["baseline_time"]
+    tiempos = params["tiempos_estacion"]
 
-    # métricas del AG
-    metrics = compute_layout_metrics(layout_vars, params)
+    K = 0.038161
+    OFFSET = 0.633842
 
-    # ensamblar diccionario de features (manteniendo nombres usados en tu CSV)
-    feature_dict = {
-        "shape_mode": params.get("shape_mode", "BASE"),
-        "n_movable": len([i for i, f in enumerate(params.get("fixed_mask", [])) if not f]),
-        "n_fixed": sum(params.get("fixed_mask", [])) if params.get("fixed_mask") else 0,
-        "fitness": float(evaluar_layout(layout_vars, params)),
-        "baseline_time": float(params.get("baseline_time", 0.0)),
-        # métricas estimadas por AG
-        "move_r1": float(metrics.get("move_r1", 0.0)),
-        "proc_r1": float(metrics.get("proc_r1", 0.0)),
-        "total_r1": float(metrics.get("total_r1", 0.0)),
-        "move_r2": float(metrics.get("move_r2", 0.0)),
-        "proc_r2": float(metrics.get("proc_r2", 0.0)),
-        "total_r2": float(metrics.get("total_r2", 0.0)),
-        "total_system_est": float(metrics.get("total_system", 0.0)),
-        "balance_teorico": float(metrics.get("balance", 0.0)),
-        "symmetry_index": float(metrics.get("symmetry_index", 0.0)),
-        "idle_time_estimated": float(metrics.get("idle_time_estimated", 0.0)),
-        # geometría calculada
-        "avg_dist_r1": avg_dist_r1,
-        "avg_dist_r2": avg_dist_r2,
-        "max_dist_r1": max_dist_r1,
-        "max_dist_r2": max_dist_r2,
-        "std_dist_r1": std_dist_r1,
-        "std_dist_r2": std_dist_r2,
-        "pct_closer_r1": pct_r1,
-        "pct_closer_r2": pct_r2,
-        "geom_balance": geom_balance,
-        "centroid_x": centroid_x,
-        "centroid_y": centroid_y,
-        "centroid_dist_r1": centroid_dist_r1,
-        "centroid_dist_r2": centroid_dist_r2,
-        "var_x": var_x,
-        "var_y": var_y,
-        "radial_dispersion": radial_dispersion,
-    }
+    total_time = 0.0
+    penalty = 0.0
 
-    # DataFrame temporario
-    df_temp = pd.DataFrame([feature_dict])
+    # Penalización geométrica básica (mantenerla)
+    penalty += separation_penalty(
+        stations,
+        params["d_min"],
+        params["PENALTY"]
+    )
 
-    # One-hot exacto como en entrenamiento
-    df_temp = pd.get_dummies(df_temp, columns=["shape_mode"], drop_first=False)
+    # ==========================
+    # ROBOT 1
+    # ==========================
+    base_x, base_y = params["R1"]
+    prev_joints = None
 
-    # Agregar columnas faltantes (con 0) y ordenar según feature_columns
-    if feature_columns:
-        for col in feature_columns:
-            if col not in df_temp.columns:
-                df_temp[col] = 0
-        # asegúrate de ordenar (si feature_columns no tiene exactamente todas, filtrar)
-        cols_present = [c for c in feature_columns if c in df_temp.columns]
-        df_temp = df_temp[cols_present]
-    else:
-        # si no hay feature_columns guardadas, usar columnas actuales del df_temp
-        pass
+    for idx in params["robot1_stations"]:
 
-    # Escalar
-    if scaler is not None:
-        try:
-            X_scaled = scaler.transform(df_temp)
-        except Exception as e:
-            # si falla transform con nombres, convertir a numpy y escalar manualmente si es posible
-            try:
-                X_scaled = scaler.transform(df_temp.values)
-            except Exception as e2:
-                print("Warning: scaler.transform falló:", e, e2)
-                X_scaled = df_temp.values
-    else:
-        X_scaled = df_temp.values
+        xg, yg = stations[idx]
 
-    return X_scaled
+        xr = (xg - base_x) * 1000.0
+        yr = (yg - base_y) * 1000.0
 
+        # PS fijo
+        ps_z = 234.635322
 
-def evaluar_layout_surrogate(layout_vars, params):
-    """
-    Evalúa con surrogate si está disponible; si no, vuelve a la evaluación directa.
-    Devuelve fitness (predicted_time / baseline).
-    """
-    model = get_surrogate()
-    if model is None:
-        # fallback seguro
-        return evaluar_layout(layout_vars, params)
+        # orientación como en tu generador
+        j0_est = math.degrees(math.atan2(yr, xr))
+        is_feeder = (idx == 0 or idx == 8)
 
-    try:
-        X = build_feature_vector(layout_vars, params)
-        # model.predict espera shape (n_samples, n_features)
-        pred = model.predict(X, verbose=0)
-        # soporte que retorne array (1,) o (1,1)
-        predicted_time = float(np.asarray(pred).reshape(-1)[0])
-        # sanity
-        if predicted_time <= 0:
-            predicted_time = max(predicted_time, 0.0)
-    except Exception as e:
-        print("Error usando surrogate, fallback a evaluar_layout:", e)
-        return evaluar_layout(layout_vars, params)
+        global_orientation = 90 if is_feeder else 0
+        beta_orientation = global_orientation - j0_est
 
-    baseline = params.get("baseline_time", 1.0)
-    fitness = predicted_time / baseline
+        res = IK_MODEL.xyz_to_joint(
+            [xr, yr, ps_z, -95, beta_orientation]
+        )
+
+        if res is None or res["status"] != 0:
+            return 9999.0  # layout inválido
+
+        joints = res["joint"]
+
+        if prev_joints is not None:
+            delta = max(abs(joints[i] - prev_joints[i]) for i in range(5))
+            total_time += K * delta + OFFSET
+
+        total_time += tiempos[idx]
+        prev_joints = joints
+
+    # ==========================
+    # ROBOT 2
+    # ==========================
+    base_x, base_y = params["R2"]
+    prev_joints = None
+
+    for idx in params["robot2_stations"]:
+
+        xg, yg = stations[idx]
+
+        xr = (xg - base_x) * 1000.0
+        yr = (yg - base_y) * 1000.0
+
+        ps_z = 234.635322
+
+        j0_est = math.degrees(math.atan2(yr, xr))
+        is_feeder = (idx == 0 or idx == 8)
+
+        global_orientation = 90 if is_feeder else 0
+        beta_orientation = global_orientation - j0_est
+
+        res = IK_MODEL.xyz_to_joint(
+            [xr, yr, ps_z, -95, beta_orientation]
+        )
+
+        if res is None or res["status"] != 0:
+            return 9999.0
+
+        joints = res["joint"]
+
+        if prev_joints is not None:
+            delta = max(abs(joints[i] - prev_joints[i]) for i in range(5))
+            total_time += K * delta + OFFSET
+
+        total_time += tiempos[idx]
+        prev_joints = joints
+
+    fitness = (total_time + penalty) / baseline
     return fitness
 
-
 # ===============================
-# GA principal (usa surrogate si está disponible)
+# GA PURO
 # ===============================
 
 def run_ga(params, bounds_R1, bounds_R2,
-           POP_SIZE=300, N_GEN=150):
+           POP_SIZE=100,
+           N_GEN=80):
+
     movable_indices = [i for i, is_fixed in enumerate(params["fixed_mask"]) if not is_fixed]
 
-    # Inicialización población
     population = [random_layout(bounds_R1, bounds_R2, params) for _ in range(POP_SIZE)]
 
     best_history = []
     avg_history = []
 
-    # determinar si hay surrogate disponible (pero no forzar crash)
-    surrogate_model = get_surrogate()
-    use_surrogate = surrogate_model is not None
-    print("USANDO SURROGATE:", use_surrogate)
+    baseline = params["baseline_time"]
 
-    # Evolución
     for gen in range(N_GEN):
-        if use_surrogate:
-            fitnesses = [evaluar_layout_surrogate(ind, params) for ind in population]
-        else:
-            fitnesses = [evaluar_layout(ind, params) for ind in population]
+
+        fitnesses = [evaluar_layout_joint_based(ind, params) for ind in population]
 
         best_fitness = min(fitnesses)
         avg_fitness = sum(fitnesses) / len(fitnesses)
+
         best_history.append(best_fitness)
         avg_history.append(avg_fitness)
 
-        # Selección elite (asegurarnos que nunca sea 0)
         elite_size = max(1, int(0.1 * POP_SIZE))
         elite_idx = sorted(range(len(population)), key=lambda i: fitnesses[i])[:elite_size]
         elite = [population[i] for i in elite_idx]
 
-        # Nueva población
         new_population = elite.copy()
+
         while len(new_population) < POP_SIZE:
             p1 = random.choice(elite)
             p2 = random.choice(elite)
@@ -477,14 +445,13 @@ def run_ga(params, bounds_R1, bounds_R2,
         if gen % 10 == 0:
             print(f"Gen {gen} | Mejor fitness: {best_fitness:.4f}")
 
-    # Resultado final (aquí usamos la evaluación real para el desglose final)
     fitnesses = [evaluar_layout(ind, params) for ind in population]
     best_idx = fitnesses.index(min(fitnesses))
     best_layout = population[best_idx]
     best_fitness = fitnesses[best_idx]
 
     best_stations = build_full_layout(best_layout, params)
-    baseline = params["baseline_time"]
+
     total_time = best_fitness * baseline
     delta_time = total_time - baseline
     improvement_percent = (1 - best_fitness) * 100
@@ -512,75 +479,10 @@ def run_ga(params, bounds_R1, bounds_R2,
 
 
 # ===============================
-# Plot helpers (sin cambios lógicos)
+# Layout helpers
 # ===============================
 
-def plot_layout_on_axis(ax, best_layout, params):
-    stations = build_full_layout(best_layout, params)
-    R1 = params["R1"]
-    R2 = params["R2"]
-    reach = params["reach"]
-    r_min = params["r_min"]
-    from matplotlib.patches import Circle
-    ax.clear()
-    ax.add_patch(Circle(R1, reach, fill=False, linestyle="--", alpha=0.5))
-    ax.add_patch(Circle(R1, r_min, fill=False, linestyle=":", alpha=0.5))
-    ax.add_patch(Circle(R2, reach, fill=False, linestyle="--", alpha=0.5))
-    ax.add_patch(Circle(R2, r_min, fill=False, linestyle=":", alpha=0.5))
-    for i, (x, y) in enumerate(stations):
-        if params["fixed_mask"][i]:
-            ax.scatter(x, y, c="red", s=120, marker="s")
-        else:
-            ax.scatter(x, y, c="blue")
-        ax.text(x + 0.01, y + 0.01, f"E{i+1}")
-    ax.scatter(*R1, c="green", s=150)
-    ax.scatter(*R2, c="purple", s=150)
-    ax.set_aspect("equal")
-    ax.grid(True)
-
-
-def plot_layout(best_layout, params):
-    stations = build_full_layout(best_layout, params)
-    R1 = params["R1"]
-    R2 = params["R2"]
-    reach = params["reach"]
-    r_min = params["r_min"]
-    fig, ax = plt.subplots(figsize=(6, 6))
-    ax.add_patch(Circle(R1, reach, fill=False, linestyle="--", alpha=0.5, label="Reach R1"))
-    ax.add_patch(Circle(R1, r_min, fill=False, linestyle=":", alpha=0.5))
-    ax.add_patch(Circle(R2, reach, fill=False, linestyle="--", alpha=0.5, label="Reach R2"))
-    ax.add_patch(Circle(R2, r_min, fill=False, linestyle=":", alpha=0.5))
-    for i, (x, y) in enumerate(stations):
-        if params["fixed_mask"][i]:
-            ax.scatter(x, y, c="red", s=120, marker="s")
-        else:
-            ax.scatter(x, y, c="blue")
-        ax.text(x + 0.01, y + 0.01, f"E{i+1}")
-    ax.scatter(*R1, c="green", s=150, label="Robot 1")
-    ax.scatter(*R2, c="purple", s=150, label="Robot 2")
-    ax.set_aspect("equal")
-    ax.grid(True)
-    ax.legend()
-    ax.set_title("Layout optimizado")
-    plt.show()
-
-
-def plot_convergence(best_history, avg_history):
-    plt.figure(figsize=(7,5))
-    plt.plot(best_history, label="Mejor fitness")
-    plt.plot(avg_history, label="Fitness promedio", linestyle="--")
-    plt.xlabel("Generación")
-    plt.ylabel("Fitness")
-    plt.title("Convergencia del Algoritmo Genético")
-    plt.grid(True)
-    plt.legend()
-    plt.show()
-
-
 def build_full_layout(layout_vars, params):
-    """
-    Reconstruye estaciones combinando fijas + variables del GA (igual que antes).
-    """
     stations = []
     var_index = 0
     for i, is_fixed in enumerate(params["fixed_mask"]):
@@ -593,6 +495,10 @@ def build_full_layout(layout_vars, params):
             var_index += 2
     return stations
 
+
+# ===============================
+# Defaults
+# ===============================
 
 def default_params():
     return {
@@ -628,17 +534,19 @@ def default_bounds(params):
     R1 = params["R1"]
     R2 = params["R2"]
     reach = params["reach"]
-    bounds_R1 = {"x": (R1[0] - reach, R1[0] + reach), "y": (R1[1] - reach, R1[1] + reach)}
-    bounds_R2 = {"x": (R2[0] - reach, R2[0] + reach), "y": (R2[1] - reach, R2[1] + reach)}
+
+    bounds_R1 = {"x": (R1[0] - reach, R1[0] + reach),
+                 "y": (R1[1] - reach, R1[1] + reach)}
+
+    bounds_R2 = {"x": (R2[0] - reach, R2[0] + reach),
+                 "y": (R2[1] - reach, R2[1] + reach)}
+
     return bounds_R1, bounds_R2
 
 
-# Si ejecutas este archivo como main, corre un GA de prueba (igual que antes).
 if __name__ == "__main__":
     params = default_params()
     bounds_R1, bounds_R2 = default_bounds(params)
-    result = run_ga(params, bounds_R1, bounds_R2, POP_SIZE=20, N_GEN=10)
+    result = run_ga(params, bounds_R1, bounds_R2, POP_SIZE=200, N_GEN=120)
     print("\nMejor fitness:", result["fitness"])
     print("\nMejores Estaciones", result["stations"])
-    plot_layout(result["layout_vars"], params)
-    plot_convergence(result["best_history"], result["avg_history"])

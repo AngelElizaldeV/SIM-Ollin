@@ -1,0 +1,836 @@
+{
+    "sequence": [
+        {
+            "robot": "Robot 1",
+            "joints": [
+                0.0,
+                58.0,
+                -90.0,
+                -53.0,
+                0.0
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Punto de Preparacion Robot 1"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                -73.402,
+                67.084,
+                -115.798,
+                -46.285,
+                163.402
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PS Est0"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                -73.402,
+                34.325,
+                -119.86,
+                -9.465,
+                163.402
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PR Est0"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                -73.402,
+                34.325,
+                -119.86,
+                -9.465,
+                163.402
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "Tomar en feeder 0"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                -73.402,
+                67.084,
+                -115.798,
+                -46.285,
+                163.402
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS after pick feeder 0"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                110.347,
+                82.38,
+                -140.04,
+                -37.339,
+                -110.347
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est1"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                110.347,
+                13.093,
+                -139.033,
+                30.939,
+                -110.347
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PR Est1"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                110.347,
+                13.093,
+                -139.033,
+                30.939,
+                -110.347
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Soltar Cubo Est1"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                110.347,
+                82.38,
+                -140.04,
+                -37.339,
+                -110.347
+            ],
+            "gripper": 1,
+            "wait": 8.0,
+            "label": "PS Est1"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                110.347,
+                13.093,
+                -139.033,
+                30.939,
+                -110.347
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PR Est1 (pre-tomar)"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                110.347,
+                13.093,
+                -139.033,
+                30.939,
+                -110.347
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "Tomar Cubo Est1"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                110.347,
+                82.38,
+                -140.04,
+                -37.339,
+                -110.347
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est1 (post-tomar)"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                147.76,
+                72.148,
+                -124.565,
+                -42.583,
+                -147.76
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est2"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                147.76,
+                20.43,
+                -123.775,
+                8.345,
+                -147.76
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PR Est2"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                147.76,
+                20.43,
+                -123.775,
+                8.345,
+                -147.76
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Soltar Cubo Est2"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                147.76,
+                72.148,
+                -124.565,
+                -42.583,
+                -147.76
+            ],
+            "gripper": 1,
+            "wait": 8.0,
+            "label": "PS Est2"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                147.76,
+                20.43,
+                -123.775,
+                8.345,
+                -147.76
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PR Est2 (pre-tomar)"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                147.76,
+                20.43,
+                -123.775,
+                8.345,
+                -147.76
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "Tomar Cubo Est2"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                147.76,
+                72.148,
+                -124.565,
+                -42.583,
+                -147.76
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est2 (post-tomar)"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                40.793,
+                82.387,
+                -140.049,
+                -37.337,
+                -40.793
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est3"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                40.793,
+                13.086,
+                -139.042,
+                30.956,
+                -40.793
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PR Est3"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                40.793,
+                13.086,
+                -139.042,
+                30.956,
+                -40.793
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Soltar Cubo Est3"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                40.793,
+                82.387,
+                -140.049,
+                -37.337,
+                -40.793
+            ],
+            "gripper": 1,
+            "wait": 5.0,
+            "label": "PS Est3"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                40.793,
+                13.086,
+                -139.042,
+                30.956,
+                -40.793
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PR Est3 (pre-tomar)"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                40.793,
+                13.086,
+                -139.042,
+                30.956,
+                -40.793
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "Tomar Cubo Est3"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                40.793,
+                82.387,
+                -140.049,
+                -37.337,
+                -40.793
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est3 (post-tomar)"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                59.112,
+                55.446,
+                -93.868,
+                -56.577,
+                -59.112
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est4"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                59.112,
+                19.768,
+                -93.213,
+                -21.555,
+                -59.112
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PR Est4"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                59.112,
+                19.768,
+                -93.213,
+                -21.555,
+                -59.112
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Soltar Cubo Final Est4"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                59.112,
+                55.446,
+                -93.868,
+                -56.577,
+                -59.112
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PS Est4 Final"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                0.0,
+                58.0,
+                -90.0,
+                -53.0,
+                0.0
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Fin ciclo R1"
+        },
+        {
+            "robot": "Robot 1",
+            "joints": [
+                0.0,
+                58.0,
+                -90.0,
+                -53.0,
+                0.0
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Punto de Preparacion Robot 1 (final)"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                0.0,
+                58.0,
+                -90.0,
+                -53.0,
+                0.0
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Punto de Preparacion Robot 2"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -58.186,
+                57.318,
+                -97.527,
+                -54.791,
+                58.186
+            ],
+            "gripper": 1,
+            "wait": 10.0,
+            "label": "Espera inicial R2 Est4"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -58.186,
+                20.396,
+                -96.868,
+                -18.528,
+                58.186
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PR Est4"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -58.186,
+                20.396,
+                -96.868,
+                -18.528,
+                58.186
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "Tomar Cubo Est4"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -58.186,
+                57.318,
+                -97.527,
+                -54.791,
+                58.186
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est4 (post-tomar)"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -31.275,
+                79.347,
+                -135.826,
+                -38.521,
+                31.275
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est5"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -31.275,
+                16.029,
+                -134.895,
+                23.866,
+                31.275
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PR Est5"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -31.275,
+                16.029,
+                -134.895,
+                23.866,
+                31.275
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Soltar Cubo Est5"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -31.275,
+                79.347,
+                -135.826,
+                -38.521,
+                31.275
+            ],
+            "gripper": 1,
+            "wait": 5.0,
+            "label": "PS Est5"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -31.275,
+                16.029,
+                -134.895,
+                23.866,
+                31.275
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PR Est5 (pre-tomar)"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -31.275,
+                16.029,
+                -134.895,
+                23.866,
+                31.275
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "Tomar Cubo Est5"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                -31.275,
+                79.347,
+                -135.826,
+                -38.521,
+                31.275
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est5 (post-tomar)"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                11.316,
+                82.384,
+                -140.046,
+                -37.338,
+                -11.316
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est6"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                11.316,
+                13.089,
+                -139.038,
+                30.949,
+                -11.316
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PR Est6"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                11.316,
+                13.089,
+                -139.038,
+                30.949,
+                -11.316
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Soltar Cubo Est6"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                11.316,
+                82.384,
+                -140.046,
+                -37.338,
+                -11.316
+            ],
+            "gripper": 1,
+            "wait": 4.0,
+            "label": "PS Est6"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                11.316,
+                13.089,
+                -139.038,
+                30.949,
+                -11.316
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PR Est6 (pre-tomar)"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                11.316,
+                13.089,
+                -139.038,
+                30.949,
+                -11.316
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "Tomar Cubo Est6"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                11.316,
+                82.384,
+                -140.046,
+                -37.338,
+                -11.316
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est6 (post-tomar)"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                107.755,
+                82.402,
+                -140.07,
+                -37.332,
+                -107.755
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est7"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                107.755,
+                13.07,
+                -139.061,
+                30.992,
+                -107.755
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PR Est7"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                107.755,
+                13.07,
+                -139.061,
+                30.992,
+                -107.755
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Soltar Cubo Est7"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                107.755,
+                82.402,
+                -140.07,
+                -37.332,
+                -107.755
+            ],
+            "gripper": 1,
+            "wait": 4.0,
+            "label": "PS Est7"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                107.755,
+                13.07,
+                -139.061,
+                30.992,
+                -107.755
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PR Est7 (pre-tomar)"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                107.755,
+                13.07,
+                -139.061,
+                30.992,
+                -107.755
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "Tomar Cubo Est7"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                107.755,
+                82.402,
+                -140.07,
+                -37.332,
+                -107.755
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est7 (post-tomar)"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                72.777,
+                69.061,
+                -119.291,
+                -44.77,
+                17.223
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PS Est8"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                72.777,
+                34.475,
+                -123.498,
+                -5.977,
+                17.223
+            ],
+            "gripper": 0,
+            "wait": 0.0,
+            "label": "PR Est8"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                72.777,
+                34.475,
+                -123.498,
+                -5.977,
+                17.223
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Soltar Cubo Final Est8"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                72.777,
+                69.061,
+                -119.291,
+                -44.77,
+                17.223
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "PS Final Est8"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                0.0,
+                58.0,
+                -90.0,
+                -53.0,
+                0.0
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Fin ciclo R2"
+        },
+        {
+            "robot": "Robot 2",
+            "joints": [
+                0.0,
+                58.0,
+                -90.0,
+                -53.0,
+                0.0
+            ],
+            "gripper": 1,
+            "wait": 0.0,
+            "label": "Punto de Preparacion Robot 2 (final)"
+        }
+    ]
+}

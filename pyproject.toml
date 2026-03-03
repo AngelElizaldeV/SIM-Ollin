@@ -14,7 +14,8 @@ dependencies = [
     "setuptools (<81)",
     "joblib (>=1.5.3,<2.0.0)",
     "pandas (==2.2.2)",
-    "numpy (==1.26.4)"
+    "numpy (==1.26.4)",
+    "scikit-learn (>=1.8.0,<2.0.0)"
 ]
 
 [tool.poetry]
@@ -24,3 +25,9 @@ packages = [{ include = "app" }]
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "jupyter (>=1.1.1,<2.0.0)",
+    "ipykernel (>=7.2.0,<8.0.0)"
+]

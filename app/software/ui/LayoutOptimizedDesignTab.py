@@ -11,6 +11,7 @@ from matplotlib.figure import Figure
 import app.software.ia_model.layout_optimizer as lo
 from app.software.ia_model.ga_settings import GASettingsDialog
 from app.software.ia_model.Trajectory_generator import generate_robot_sequence_industrial
+from app.public.utils import update_station_positions
 
 
 
@@ -232,8 +233,6 @@ class LayoutOptimizerDesignerTab(QWidget):
         if len(full_layout) != 9:
             print("El layout reconstruido no tiene 9 estaciones.")
             return
-
-        from app.software.simulation.controller import update_station_positions
         update_station_positions(full_layout)
 
         print("Layout de escenario actualizado.")
