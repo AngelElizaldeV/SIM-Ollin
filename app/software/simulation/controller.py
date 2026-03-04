@@ -37,6 +37,7 @@ from app.software.simulation.virtual_controller import VirtualRobotController
 from app.software.simulation.physical_sync import PhysicalRobotSync
 from app.software.simulation.sequence_worker import SequenceWorker
 from app.software.ia_model.rn_dataset_builder import RNDatasetBuilder
+from app.software.ui.analysis_dashboard import AnalysisTab
 
 
 from app.software.ui.LayoutOptimizedDesignTab import LayoutOptimizerDesignerTab
@@ -162,7 +163,13 @@ class RobotController(QTabWidget):
 
         self.last_move_time = time.time()
 
+    import sys
+    from PyQt6.QtWidgets import QApplication
 
+    argv = sys.argv if len(sys.argv) > 0 else ['app']
+    if not QApplication.instance():
+        app = QApplication(argv)
+# luego instancias tu ventana/pestañas...
     # ----------------------------------------
     # Setup de pestañas
     # ----------------------------------------
@@ -189,6 +196,9 @@ class RobotController(QTabWidget):
 
         self.Layout_tab = LayoutOptimizerDesignerTab(self)
         self.addTab(self.Layout_tab, "Trayectoria Inteligente")
+
+        self.analysis = AnalysisTab(self)
+        self.addTab(self.analysis, "Analisis de datos")
 
 
         """# --- NUEVA TAB: Trayectoria Inteligente ---
@@ -872,7 +882,16 @@ class RobotController(QTabWidget):
             return
 
         # --- Guardar CSV ---
-        csv_path =f"execution_{layout_id}.csv"
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        EXECUTIONS_DIR = os.path.join(BASE_DIR, "..", "executions")
+
+        os.makedirs(EXECUTIONS_DIR, exist_ok=True)
+
+        csv_path = os.path.join(
+            EXECUTIONS_DIR,
+            f"execution_{layout_id}.csv"
+)
+
 
         # Deshabilitar botones mientras corre
         self.btn_execute_sequence.setEnabled(False)

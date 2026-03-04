@@ -87,3 +87,35 @@ dorna/*.egg-info/
 # Modelos grandes (si no quieres subirlos)
 *.h5
 *.keras
+
+# Ignorar contenido de executions
+executions/*
+!executions/.gitkeep
+
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+.venv/
+
+# Dataset / ML artifacts
+*.csv
+*.pkl
+*.joblib
+*.h5
+*.keras
+
+# Jupyter
+*.ipynb
+
+# Execution outputs
+executions/*
+!executions/.gitkeep
+
+# Analysis cache
+.analysis_cache/
+
+# Layout execution outputs
+sequence_*.json

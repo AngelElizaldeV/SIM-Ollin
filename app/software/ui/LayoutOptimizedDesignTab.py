@@ -267,9 +267,9 @@ class LayoutOptimizerDesignerTab(QWidget):
         }
 
         output_path = os.path.join(
-    os.path.dirname(__file__),
-    f"sequence_{self.current_layout_id}.json"
-)
+                                    os.path.dirname(__file__),
+                                    f"sequence_{self.current_layout_id}.json"
+                                )
 
         with open(output_path, "w") as f:
             json.dump(full_sequence, f, indent=4)

@@ -15,7 +15,9 @@ dependencies = [
     "joblib (>=1.5.3,<2.0.0)",
     "pandas (==2.2.2)",
     "numpy (==1.26.4)",
-    "scikit-learn (>=1.8.0,<2.0.0)"
+    "scikit-learn (>=1.8.0,<2.0.0)",
+    "plotly (>=6.6.0,<7.0.0)",
+    "pyqt6-webengine (>=6.10.0,<7.0.0)"
 ]
 
 [tool.poetry]
